@@ -81,11 +81,12 @@ def objective_function_LASSO(x,A,y,lam,w=None):
     obj = lam*np.sum(w*np.abs(x)) + np.sum((A@x-y)**2)
     return obj
 
+create_h_vec = lambda grid: grid[1:] - grid[:-1];   # x_{i} - x_{i-1} 
+create_y_vec = lambda m,d: np.array((m-1)*[0]+[d]); # y = [0,...,0,d] (length m)
+
 
 if __name__ == "__main__":
-    create_h_vec = lambda grid: grid[1:] - grid[:-1];   # x_{i} - x_{i-1} 
-    create_y_vec = lambda m,d: np.array((m-1)*[0]+[d]); # y = [0,...,0,d] (length m)
-    
+
     # Choose the problem parameters 
     N = 5
     m = 3
@@ -104,7 +105,7 @@ if __name__ == "__main__":
     # Create problem data
     h_vec1 = create_h_vec(grid1)
     A1 = create_implicit_Euler_matrix(m, a, h_vec1)
-    
+    print('A1\n', A1)    
     # Solve the problem 
     solution_vector_problem1 = compute_LASSO_solution(A1,y,lam)
     
@@ -117,6 +118,7 @@ if __name__ == "__main__":
     h_vec2 = create_h_vec(grid2)
     A2 = create_implicit_Euler_matrix(m, a, h_vec2)
 
+    print('A2\n', A2)    
     # Solve the problem 
     solution_vector_problem2 = compute_LASSO_solution(A2, y, lam)
     print(f'Solution vector problem 1: {solution_vector_problem1}')
