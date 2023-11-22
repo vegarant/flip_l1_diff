@@ -11,20 +11,17 @@ def create_implicit_Euler_matrix(m, a, h_vec):
     N = len(h_vec)
     A = np.zeros([m,N]);
     h_bar_vec  = 1/(1+a*h_vec);
-    #print('h_bar_vec: ', h_bar_vec)
     
     # Create the lower triangular part
-    for n in range(m):   # Row index
+    for n in range(m-1):   # Row index
         for i in range(n+1): # Column index
             prod_entry = np.prod(h_bar_vec[i:n+1])
-            #print(f'n: {n}, i: {i}, prod_entry: {prod_entry}')
             A[n,i] = h_vec[i]*prod_entry
-    
+
     # Insert the components in the last row
-    for i in range(m-1,N): # Column index 
+    for i in range(N): # Column index 
             prod_entry = np.prod(h_bar_vec[i:N+1])
-            #print(f'n: {n}, i: {i}, prod_entry: {prod_entry}')
-            A[n,i] = h_vec[i]*prod_entry
+            A[m-1,i] = h_vec[i]*prod_entry
         
     return A
 
@@ -101,51 +98,48 @@ if __name__ == "__main__":
     ######################################
     # I have handcrafted these grids by trail and error. 
     grid1 = np.array([0, 0.05, 0.2, 0.63,.72,  1]) 
-
     # Create problem data
     h_vec1 = create_h_vec(grid1)
+    print('h_vec1:\n', h_vec1)
     A1 = create_implicit_Euler_matrix(m, a, h_vec1)
     print('A1\n', A1)    
     # Solve the problem 
-    solution_vector_problem1 = compute_LASSO_solution(A1,y,lam)
-    
-    ######################################
-    # Consider the second discretization 
-    ######################################
-    grid2 = np.array([0, 0.05, 0.2, 0.63,0.73, 1]) 
-
-    # Create problem data
-    h_vec2 = create_h_vec(grid2)
-    A2 = create_implicit_Euler_matrix(m, a, h_vec2)
-
-    print('A2\n', A2)    
-    # Solve the problem 
-    solution_vector_problem2 = compute_LASSO_solution(A2, y, lam)
-    print(f'Solution vector problem 1: {solution_vector_problem1}')
-    print(f'Solution vector problem 2: {solution_vector_problem2}')
-    
-
-    ######################################
-    # Evaluate the two solutions
-    ######################################
-
-    objective_problem1 = lambda x: objective_function_LASSO(x, A1, y, lam, w)
-    objective_problem2 = lambda x: objective_function_LASSO(x, A2, y, lam, w)
-
-    print('\nPROBLEM 1\n')
-    value_problem1_solution_problem1 = objective_problem1(solution_vector_problem1) 
-    value_problem1_solution_problem2 = objective_problem1(solution_vector_problem2) 
-    print('Value of objective function in problem 1:')
-    print(f'Solution problem 1: {value_problem1_solution_problem1}')
-    print(f'Solution problem 2: {value_problem1_solution_problem2}')
-
-    print('\nPROBLEM 2\n')
-    value_problem2_solution_problem1 = objective_problem2(solution_vector_problem1) 
-    value_problem2_solution_problem2 = objective_problem2(solution_vector_problem2) 
-    print('Value of objective function in problem 2:')
-    print(f'Solution problem 1: {value_problem2_solution_problem1}')
-    print(f'Solution problem 2: {value_problem2_solution_problem2}')
-
-
-
-
+#    solution_vector_problem1 = compute_LASSO_solution(A1,y,lam)
+#    
+#    ######################################
+#    # Consider the second discretization 
+#    ######################################
+#    grid2 = np.array([0, 0.05, 0.2, 0.63,0.73, 1]) 
+#
+#    # Create problem data
+#    h_vec2 = create_h_vec(grid2)
+#    A2 = create_implicit_Euler_matrix(m, a, h_vec2)
+#
+#    print('A2\n', A2)    
+#    # Solve the problem 
+#    solution_vector_problem2 = compute_LASSO_solution(A2, y, lam)
+#    print(f'Solution vector problem 1: {solution_vector_problem1}')
+#    print(f'Solution vector problem 2: {solution_vector_problem2}')
+#    
+#
+#    ######################################
+#    # Evaluate the two solutions
+#    ######################################
+#
+#    objective_problem1 = lambda x: objective_function_LASSO(x, A1, y, lam, w)
+#    objective_problem2 = lambda x: objective_function_LASSO(x, A2, y, lam, w)
+#
+#    print('\nPROBLEM 1\n')
+#    value_problem1_solution_problem1 = objective_problem1(solution_vector_problem1) 
+#    value_problem1_solution_problem2 = objective_problem1(solution_vector_problem2) 
+#    print('Value of objective function in problem 1:')
+#    print(f'Solution problem 1: {value_problem1_solution_problem1}')
+#    print(f'Solution problem 2: {value_problem1_solution_problem2}')
+#
+#    print('\nPROBLEM 2\n')
+#    value_problem2_solution_problem1 = objective_problem2(solution_vector_problem1) 
+#    value_problem2_solution_problem2 = objective_problem2(solution_vector_problem2) 
+#    print('Value of objective function in problem 2:')
+#    print(f'Solution problem 1: {value_problem2_solution_problem1}')
+#    print(f'Solution problem 2: {value_problem2_solution_problem2}')
+#
