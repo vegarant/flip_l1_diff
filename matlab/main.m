@@ -18,6 +18,7 @@ objective_function_LASSO = @(x, A, y, lam, w) lam*sum(w.*abs(x)) + sum((A*x - y)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % I have handcrafted these grids by trail and error. 
 grid1 = [0, 0.05, 0.2, 0.63,.72,  1];
+%grid1 = refine_mesh(grid1); % refining the mesh does not give the same problem R_2 no longer greater than lambda/2*y[-1]  
 
 % Create problem data
 h_vec1 = create_h_vec(grid1);
@@ -29,7 +30,7 @@ A1
 % Solve the problem 
 solution_vector_problem1 = compute_LASSO_solution(A1,y,lam);
 
-sol_vec_lass = lasso(sqrt(2*N)*A1,sqrt(2*N)*y,... % Compentsate for matlab scaling
+sol_vec_lass1 = lasso(sqrt(2*N)*A1,sqrt(2*N)*y,... % Compentsate for matlab scaling
                     'Alpha', 1,... % The lasso optimization problem
                     'Lambda', lam,... 
                     'Intercept', false,... % removes beta_0 from the problem
@@ -41,27 +42,41 @@ sol_vec_lass = lasso(sqrt(2*N)*A1,sqrt(2*N)*y,... % Compentsate for matlab scali
 objective_problem1 = @(x) objective_function_LASSO(x, A1, y, lam, w);
 
 solution_vector_problem1
-sol_vec_lass
+sol_vec_lass1
 objective_problem1(solution_vector_problem1)
-objective_problem1(sol_vec_lass)
+objective_problem1(sol_vec_lass1)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Consider the second discretization 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%grid2 = [0, 0.05, 0.2, 0.63,0.73, 1];
+grid2 = [0, 0.05, 0.2, 0.63,0.73, 1];
+%grid2 = refine_mesh(grid2); %  
 %
 %% Create problem data
-%h_vec2 = create_h_vec(grid2);
-%A2 = create_implicit_Euler_matrix(m, a, h_vec2);
+h_vec2 = create_h_vec(grid2);
+A2 = create_implicit_Euler_matrix(m, a, h_vec2);
 %
 %A2
 %
 %% Solve the problem 
-%solution_vector_problem2 = compute_LASSO_solution(A2, y, lam);
+solution_vector_problem2 = compute_LASSO_solution(A2, y, lam);
 %
-%solution_vector_problem1
-%solution_vector_problem2
+sol_vec_lass2 = lasso(sqrt(2*N)*A2,sqrt(2*N)*y,... % Compentsate for matlab scaling
+                    'Alpha', 1,... % The lasso optimization problem
+                    'Lambda', lam,... 
+                    'Intercept', false,... % removes beta_0 from the problem
+                    'Standardize', false, ... % No preprocessing of A
+                    'MaxIter',1e5, ... % These values are a bit random
+                    'RelTol',1e-8); % I have not read up on them in detail
+
+
+
+
+solution_vector_problem1
+sol_vec_lass1
+solution_vector_problem2
+sol_vec_lass2
 %
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
