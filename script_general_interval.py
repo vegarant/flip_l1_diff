@@ -35,6 +35,8 @@ def cretate_flipping_grid(a, N, m, h_m, h_N, eps=1e-5):
         else:
             grid[m-1] = s-h_m - eps;
         
+    print (grid1) 
+    print (grid2) 
     return grid1, grid2
 
 
@@ -62,6 +64,7 @@ if __name__ == "__main__":
 
     # Create problem data
     h_vec1 = create_h_vec(grid1)
+    print (h_vec1) 
     A1 = create_implicit_Euler_matrix(m, a, h_vec1)
     
     # Solve the problem 
@@ -73,6 +76,7 @@ if __name__ == "__main__":
 
     # Create problem data
     h_vec2 = create_h_vec(grid2)
+    print (h_vec2) 
     A2 = create_implicit_Euler_matrix(m, a, h_vec2)
 
     # Solve the problem 
