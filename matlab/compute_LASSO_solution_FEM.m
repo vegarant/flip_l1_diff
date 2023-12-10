@@ -12,10 +12,18 @@
 % Returns
 % ------- 
 % z_hat (vector) : The solution vector to the LASSO problem
-function z_hat = compute_LASSO_solution(A, y, lam, w)
+function z_hat = compute_LASSO_solution_FEM(A, y, lam, w)
 
-    [m, N] = size(A);
-    d = y(end); 
+    [m1, N] = size(A);
+    
+    if m1 ~= 1
+        emsg = sprintf('`A` must be a row matrix with one row. Current `A` has %d rows', m1);
+        error(emsg);
+    end
+    if y ~= 1
+        emsg = sprintf('`y` must equal 1');
+        error(emsg);
+    end
     
     if (nargin < 4)
         w = ones([1,N]);
@@ -23,40 +31,33 @@ function z_hat = compute_LASSO_solution(A, y, lam, w)
     if iscolumn(w)
         w = w';
     end
-
-    diagA = zeros([m-1,1]);
-    for i = 1:m-1
-        diagA(i) = A(i,i);
-    end
-    R_1 = max( diagA./w(1:m-1) );
-    R_2_vec = A(m,m:end)./w(m:end);
-    R_2 = max(R_2_vec(:));
+    max_value = max(lam*w./A)
+    min_value = min(lam*w./A)
     
-    if R_2  <= R_1
-        emsg = sprintf('Must have that R_2 > R_1. Currently these values are R_2 = %g, R_1 = %g', R_2, R_1);
+    if min_value <= -0 
+        emsg = sprintf('Must have `lam*w_j*rho_j^{-1} > 0`. Currently the smalles value is %g', min_value);
         error(emsg);
     end
-    if (R_2 <= lam/(2*d))
-        emsg = sprintf('Must have R_2 > lambda/(2*y[-1]). Currently these values are R_2 = %g, lam/(2*d) = %g.', R_2, lam/(2*d));   
-        error(emsg);
-    end
-    if norm(y(1:end-1)) > 1e-16 
-        emsg = 'The m-1 first entries of y must be zero.'; 
+
+    if max_value >= 2 
+        emsg = sprintf('Must have `lam*w_j*rho_j^{-1} < 2`. Currently the largest value is %g', min_value);
         error(emsg);
     end
      
-    support_set_solutions = R_2_vec == R_2; % \mathcal{J}
+    support_set_solutions =  min_value ==  lam*w./A; 
     number_of_non_zero_elements = sum(support_set_solutions);
+    t_j = 1/number_of_non_zero_elements;
     
     if number_of_non_zero_elements > 1
         disp('Multivalued solution');
     end
     
     idx_sol = find(support_set_solutions); % Pick the first non-zero index.
-    idx_sol = m-1 + idx_sol(1);
-    
-    mat_entry = A(m,idx_sol);
+   
     z_hat = zeros([N,1]);
-    z_hat(idx_sol) = (d/mat_entry) - (lam/(2*R_2*mat_entry));
-
+    z_hat(idx_sol) = (1 - 0.5*min_value)*t_j./A(idx_sol);
 end 
+
+
+
+

@@ -27,7 +27,7 @@ A1 = create_implicit_Euler_matrix(m, a, h_vec1);
 A1
 
 % Solve the problem 
-solution_vector_problem1 = compute_LASSO_solution(A1,y,lam);
+solution_vector_problem1 = compute_LASSO_solution_implicit_Euler(A1,y,lam);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Consider the second discretization 
@@ -41,7 +41,7 @@ A2 = create_implicit_Euler_matrix(m, a, h_vec2);
 A2
 
 % Solve the problem 
-solution_vector_problem2 = compute_LASSO_solution(A2, y, lam);
+solution_vector_problem2 = compute_LASSO_solution_implicit_Euler(A2, y, lam);
 
 solution_vector_problem1
 solution_vector_problem2
