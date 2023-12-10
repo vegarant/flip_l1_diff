@@ -18,9 +18,13 @@ function A = poisson1DMatrix(hvec)
         A(i, i+1) = -1 / (h_ih*h_ip);
     end
     % check with dense comp for starters 
-    A(1, 1) = 1/h_ip;  
-    A(1, 2) = -1/h_ip;  
-    A(n, n) = 1/h_im;  
-    A(n, n-1) = -1/h_im;  
+    % Neumann:  
+    % A(1, 1) = 1/h_ip;  
+    % A(1, 2) = -1/h_ip;  
+    % A(n, n) = 1/h_im;  
+    % A(n, n-1) = -1/h_im;  
+    % Dirichlet: 
+    A(1, 1) = 1; 
+    A(n, n) = 1; 
     A = full(A); 
 end

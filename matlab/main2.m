@@ -1,7 +1,25 @@
 clear('all'); close('all');
 
+create_h_vec = @(grid) grid(2:end) - grid(1:end-1);  % x_{i} - x_{i-1}
+objective_function_LASSO = @(x, A, y, lam, w) lam*sum(w.*abs(x)) + sum((A*x - y).^2); % lambda*||x||_{1,w} + ||Ax - y||_{2}^{2}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Consider the first discretization 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% mesh coarse, fine, coarse, fine ... but no flipping  
+N1 = 2
+N2 = 4 
+cl = [0: 0.25/N1: 0.25];
+fl = [0.25: 0.25/N2: 0.5];
+cr = [0.5: 0.25/N1: 0.75];
+fr = [0.75: 0.25/N2: 1.0];
+grid1 = unique([cl, fl, cr, fr]);  
+grid1 
+
+
 % Choose the problem parameters 
-N = 5;
+N = size(grid1);  
+N = N(2); 
 m = 3;
 a = 1;
 lam = 1;
@@ -10,14 +28,7 @@ w = ones([N,1]); % The weights
 y = zeros([m,1]);
 y(end) = d;
 
-create_h_vec = @(grid) grid(2:end) - grid(1:end-1);  % x_{i} - x_{i-1}
-objective_function_LASSO = @(x, A, y, lam, w) lam*sum(w.*abs(x)) + sum((A*x - y).^2); % lambda*||x||_{1,w} + ||Ax - y||_{2}^{2}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Consider the first discretization 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% I have handcrafted these grids by trail and error. 
-grid1 = [0, 0.05, 0.2, 0.63,.72,  1];
 %grid1 = refine_mesh(grid1); % refining the mesh does not give the same problem R_2 no longer greater than lambda/2*y[-1]  
 
 % Create problem data
@@ -28,7 +39,7 @@ A1 = create_implicit_Euler_matrix(m, a, h_vec1);
 A1
 
 % Solve the problem 
-solution_vector_problem1 = compute_LASSO_solution_implicit_Euler(A1,y,lam);
+solution_vector_problem1 = compute_LASSO_solution(A1,y,lam);
 
 sol_vec_lass1 = lasso(sqrt(2*N)*A1,sqrt(2*N)*y,... % Compentsate for matlab scaling
                     'Alpha', 1,... % The lasso optimization problem
@@ -37,6 +48,7 @@ sol_vec_lass1 = lasso(sqrt(2*N)*A1,sqrt(2*N)*y,... % Compentsate for matlab scal
                     'Standardize', false, ... % No preprocessing of A
                     'MaxIter',1e5, ... % These values are a bit random
                     'RelTol',1e-8); % I have not read up on them in detail
+
 
 objective_problem1 = @(x) objective_function_LASSO(x, A1, y, lam, w);
 
@@ -49,8 +61,10 @@ objective_problem1(sol_vec_lass1)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Consider the second discretization 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-grid2 = [0, 0.05, 0.2, 0.63,0.73, 1];
-%grid2 = refine_mesh(grid2); %  
+eps = 0.001 
+rand_vec = eps* rand(size(grid1)) 
+grid2 = grid1 + rand_vec 
+grid2 
 %
 %% Create problem data
 h_vec2 = create_h_vec(grid2);
