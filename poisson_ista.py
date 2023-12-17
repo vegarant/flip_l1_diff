@@ -91,8 +91,9 @@ while it <= max_it:
 plt.plot(x) 
 plt.show()
 
-plt.plot(residuals) 
-plt.plot(L1_norm_weigheds) 
+plt.loglog(residuals) 
+plt.loglog(L1_norm_weigheds) 
+plt.legend(["equation residual ", "L1 comp"])
 plt.show()
 
 
