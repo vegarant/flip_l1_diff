@@ -74,7 +74,7 @@ max_it = 50000
 residuals = []
 L1_norm_weigheds = []
 while it <= max_it:  
-    z = xp - np.dot(1.0/(sigma* nn)*  AA, xp) - np.dot(A.transpose(), y)
+    z = xp - 1.0/(sigma* nn)*(np.dot(AA, xp) - np.dot(A.transpose(), y))
     x = S(z, lmbda/sigma)   
     residual = np.dot(A, x) - y 
     residuals.append(np.linalg.norm(residual)) 
