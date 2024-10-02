@@ -104,22 +104,23 @@ if __name__ == "__main__":
     A1 = create_implicit_Euler_matrix(m, a, h_vec1)
     print('A1\n', A1)    
     # Solve the problem 
-#    solution_vector_problem1 = compute_LASSO_solution(A1,y,lam)
+    solution_vector_problem1 = compute_LASSO_solution(A1,y,lam)
 #    
 #    ######################################
 #    # Consider the second discretization 
 #    ######################################
-#    grid2 = np.array([0, 0.05, 0.2, 0.63,0.73, 1]) 
+    grid2 = np.array([0, 0.05, 0.2, 0.63,0.73, 1]) 
 #
 #    # Create problem data
-#    h_vec2 = create_h_vec(grid2)
-#    A2 = create_implicit_Euler_matrix(m, a, h_vec2)
+    h_vec2 = create_h_vec(grid2)
+    print('h_vec2:\n', h_vec2)
+    A2 = create_implicit_Euler_matrix(m, a, h_vec2)
 #
-#    print('A2\n', A2)    
+    print('A2\n', A2)    
 #    # Solve the problem 
-#    solution_vector_problem2 = compute_LASSO_solution(A2, y, lam)
-#    print(f'Solution vector problem 1: {solution_vector_problem1}')
-#    print(f'Solution vector problem 2: {solution_vector_problem2}')
+    solution_vector_problem2 = compute_LASSO_solution(A2, y, lam)
+    print(f'Solution vector problem 1: {solution_vector_problem1}')
+    print(f'Solution vector problem 2: {solution_vector_problem2}')
 #    
 #
 #    ######################################
